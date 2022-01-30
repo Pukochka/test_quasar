@@ -44,9 +44,6 @@ export default {
     }
   },
   methods:{
-    _addCard(){
-
-    },
     clearValue(){
       console.log(this.header,this.description)
       this.header ='';
