@@ -1,8 +1,8 @@
 {
   "name": "quasar-app",
   "version": "0.0.1",
-  "description": "simle",
-  "productName": "maket",
+  "description": "store",
+  "productName": "Accraf-store",
   "author": "pukochka",
   "private": true,
   "scripts": {
