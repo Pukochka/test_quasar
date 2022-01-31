@@ -12,6 +12,7 @@ const routes = [
       { path: '/probl', component: () => import('src/pages/Probl.vue') },
       { path: '/signin', component: () => import('src/pages/SignIn.vue') },
       { path: '/register', component: () => import('src/pages/Register.vue') },
+      { path: '/mypay', component: () => import('src/pages/Mypay.vue') },
     ]
   },
 

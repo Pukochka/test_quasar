@@ -1,6 +1,34 @@
 <template>
+<div class="text-h2">Accraf-store</div>
   <div class="flex justify-center">
-    <h1>Main page</h1>
+    
+    <q-list padding class="row">
+      <q-item  v-ripple >
+        <q-item-section avatar>
+          <q-icon color="primary" name="bluetooth" />
+        </q-item-section>
+
+        <q-item-section>Icon as avatar</q-item-section>
+      </q-item>
+
+      <q-item  v-ripple>
+        <q-item-section avatar>
+          <q-avatar color="teal" text-color="white" icon="bluetooth" />
+        </q-item-section>
+
+        <q-item-section>Avatar-type icon</q-item-section>
+      </q-item>
+
+      <q-item  v-ripple>
+        <q-item-section avatar>
+          <q-avatar rounded color="purple" text-color="white" icon="bluetooth" />
+        </q-item-section>
+
+        <q-item-section>Rounded avatar-type icon</q-item-section>
+      </q-item>
+
+      
+    </q-list>
   </div>
     
 </template>

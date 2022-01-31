@@ -9,7 +9,7 @@
 
         <q-list dense class="row" style="height:40px;">
 
-          <q-item clickable to="/signin" class="borrad">
+          <q-item clickable to="/mypay" class="borrad">
           
             <q-item-section class=" text-subtitle1" >
               Мои покупки
