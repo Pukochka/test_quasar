@@ -5,7 +5,7 @@
     
       <q-list separator bordered padding class="rounded-borders text-primary col-2" >
 
-        <q-item clickable v-ripple @click="openFilter(all)">
+        <q-item clickable v-ripple @click="openMain()">
           <q-item-section avatar>
             <q-icon name="add" />
           </q-item-section>
@@ -13,12 +13,12 @@
           <q-item-section>Все</q-item-section>
         </q-item>
       
-        <q-item v-for="item in items" :key="item.id" clickable v-ripple>
+        <q-item v-for="head in heads" :key="head.id" clickable v-ripple @click="openFilter(head)">
           <q-item-section avatar>
             <q-icon name="add" />
           </q-item-section>
 
-          <q-item-section>{{item.design.title}}</q-item-section>
+          <q-item-section>{{head.design.title}}</q-item-section>
         </q-item>
 
       </q-list>
@@ -35,7 +35,9 @@
       <tbody >
         <q-markup-table bordered class="q-ml-md q-mr-md full-width" >
           <tbody v-for="item in items" :key="item.id" class="rel">
+  
             <div class="full-width q-pa-md text-h6 bggr " style="width:100%;">{{item.design.title}}</div>
+            
             <tr v-for="desc in item.items" :key="desc.id" class="">
               
               <td class="text-left" >{{desc.design.title}}</td>
@@ -52,9 +54,9 @@
     </q-markup-table>
       </tbody>
     </q-markup-table>
-    
-    
+  
   </div>
+  
     <q-dialog v-model="pay" full-height>
       <q-card class="column full-height full-width" style="width: 300px">
         <q-card-section>
@@ -115,7 +117,7 @@ export default {
   data(){
     return{
       items:[],
-      
+      heads:[]
     }
     
   },
@@ -149,21 +151,27 @@ export default {
       this.desc = desc;
       return desc;
     },
-    openFilter(){
-      if(this.onreadyStateChange()){
-        skel = false
-      }
+    openMain(){
+      this.items = [];
+      this.items = this.heads
+    },
+    openFilter(item){
+      this.item = item;
+      this.items = [];
+      this.items.push(item);
     },
     formatMoney(data){
       const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
       return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
     },
-    async onreadyStateChange(filter){
+    async onreadyStateChange(){
         axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk','bot_id=30219&category_id=0')
         .then(response => {
           for(let item in response.data.data){
+            this.heads.push(response.data.data[item])
             this.items.push(response.data.data[item])
             console.log(this.items)
+            console.log(this.heads)
           }
         })
         .catch(console.log('error'))
