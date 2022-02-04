@@ -1,59 +1,66 @@
 <template>
-<div class="text-h2 flex justify-center q-pa-md ">Accraf-store</div>
+<div class="text-h3 flex justify-center q-pa-md ">Товары</div>
 
-  <div class="flex row wrap justify-center">
+  <div class="fit row wrap justify-center items-start content-start">
     
-      <q-list separator bordered padding class="rounded-borders text-primary col-2" >
+    <div class="mw200">
+      <q-list separator bordered padding class="rounded-borders text-primary " >
 
         <q-item clickable v-ripple @click="openMain()">
           <q-item-section avatar>
-            <q-icon name="add" />
+            <q-icon name="circle" size="12px" />
           </q-item-section>
 
-          <q-item-section>Все</q-item-section>
+          <q-item-section class="text-subtitle1 text-weight-medium">Все</q-item-section>
         </q-item>
       
         <q-item v-for="head in heads" :key="head.id" clickable v-ripple @click="openFilter(head)">
           <q-item-section avatar>
-            <q-icon name="add" />
+            <q-icon name="circle" size="12px"/>
           </q-item-section>
 
-          <q-item-section>{{head.design.title}}</q-item-section>
+          <q-item-section class="text-subtitle1 text-weight-medium">{{head.design.title}}</q-item-section>
         </q-item>
 
       </q-list>
-    
-    <q-markup-table :separator="separator" flat bordered class="q-ml-md q-mr-md col-8 q-mb-lg" >
-      <thead>
-        <ul class="main-head q-px-md">
-          <li>Продукт</li>
-          <li>Осталось</li>
-          <li>1 штука</li>
-          <li>Покупка</li>
-        </ul>
-      </thead>
-      <tbody >
-        <q-markup-table bordered class="q-ml-md q-mr-md full-width" >
-          <tbody v-for="item in items" :key="item.id" class="rel">
-  
-            <div class="full-width q-pa-md text-h6 bggr " style="width:100%;">{{item.design.title}}</div>
-            
-            <tr v-for="desc in item.items" :key="desc.id" class="">
+    </div>
+      
+    <div class="col-8 w600">
+      <q-markup-table bordered class="q-mx-md q-mb-lg" >
+        <thead>
+          <ul class="main-head q-px-md">
+            <li>Продукт</li>
+            <li>Осталось</li>
+            <li>1 штука</li>
+            <li>Покупка</li>
+          </ul>
+        </thead>
+        <tbody >
+          <q-markup-table bordered class="q-ml-md q-mr-md full-width" >
+            <tbody v-for="item in items" :key="item.id" class="rel">
+              <tr>
+                <th colspan="5">
+                  <div class="row no-wrap items-center justify-center bggr">
+                    <div class="text-h6 ">{{item.design.title}}</div>
+                  </div>
+                </th>
+              </tr>
               
-              <td class="text-left" >{{desc.design.title}}</td>
-              <td class="text-right" >{{desc.setting.count}}</td>
-              <td class="text-right" >{{formatMoney(counting(desc).price.amount)}} {{desc.price.currency}}</td>
-              <td class="text-right" >
-                
-                <q-btn color="white" text-color="black" label="Купить" @click="openPay(desc);openDesc(desc)"/>
-              </td>
-              <q-separator horizontal dark />
-            </tr>
+              <tr v-for="desc in item.items" :key="desc.id">
+                <td class="text-left" >{{desc.design.title}}</td>
+                <td class="text-right" >{{desc.setting.count}}</td>
+                <td class="text-right" >{{formatMoney(counting(desc).price.amount)}} {{desc.price.currency}}</td>
+                <td class="text-right" >
+                  <q-btn color="white" text-color="black" @click="openItem(item);openPay(desc);openDesc(desc);validate(openDesc(desc).setting.count)">Купить</q-btn>
+                </td>
+              </tr>
 
-          </tbody>
-    </q-markup-table>
-      </tbody>
-    </q-markup-table>
+            </tbody>
+      </q-markup-table>
+        </tbody>
+      </q-markup-table>
+    </div>
+    
   
   </div>
   
@@ -64,7 +71,7 @@
         </q-card-section>
 
         <q-card-section  class="col q-pt-none">
-          {{desc.design.title}}
+          {{openItem(item).design.title}} : {{desc.design.title}}
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
@@ -80,11 +87,11 @@
         </q-card-section>
 
         <q-card-section class="col q-pt-none flex justify-between items-center">
-          <q-badge color="blue q-pa-sm text-h6">
+          <q-badge color="blue q-ma-sm text-h6">
             Осталось : {{openDesc(desc).setting.count}}
           </q-badge>
 
-          <q-input type="number" @click="counting(desc)" :min="openDesc(desc).setting.count - (openDesc(desc).setting.count - 1)" :max="openDesc(desc).setting.count" v-model="num" filled style="width: 200px"/>
+          <q-input type="number" @keydown="validate(openDesc(desc).setting.count);isHidden=false" @keyup="validate(openDesc(desc).setting.count)" @focus="counting(desc);" :min="openDesc(desc).setting.count - (openDesc(desc).setting.count - 1)" :max="openDesc(desc).setting.count" v-model="num" filled style="width: 200px"/>
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
@@ -96,14 +103,14 @@
         </q-card-section>
 
         <q-card-section class="col q-pt-none" color="green">
-          <q-badge color="green q-pa-sm text-h6">
-              К оплате: {{formatMoney(parseInt(counting(desc).price.amount)*num) }} {{desc.price.currency}}
+          <q-badge color="blue q-ma-sm text-h6" v-bind:class="{hidden : isHidden}">
+            К оплате: {{formatMoney(parseInt(counting(desc).price.amount)*num) }} {{desc.price.currency}}
           </q-badge>
           
         </q-card-section>
 
         <q-card-actions align="center" class="bg-white text-teal">
-          <q-btn rounded flat label="Перейти к оплате" v-close-popup @click="pay = false"/>
+          <q-btn rounded flat label="Перейти к оплате" v-close-popup @click="pay = false; "/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -117,7 +124,8 @@ export default {
   data(){
     return{
       items:[],
-      heads:[]
+      heads:[],
+      isHidden:true
     }
     
   },
@@ -142,6 +150,21 @@ export default {
       this.desc = desc;
       this.pay = true;
       console.log(this.num)
+    },
+    validate(count){
+      if(this.num > count){
+        this.num = count;
+      }
+      
+    },
+    nanPrice(price){
+      if(this.num !== NaN){
+        return price;
+      }
+    },
+    openItem(item){
+      this.item = item;
+      return item
     },
     openDesc(desc){
       this.desc = desc;
@@ -171,7 +194,6 @@ export default {
             this.heads.push(response.data.data[item])
             this.items.push(response.data.data[item])
             console.log(this.items)
-            console.log(this.heads)
           }
         })
         .catch(console.log('error'))
@@ -197,7 +219,7 @@ export default {
   justify-content: space-between;
 }
 .bggr{
-  background-color: rgb(235, 233, 233);
+  background-color: rgba(245, 239, 239, 0.788);
   border-radius: 5px;
 }
 .flexdir{
@@ -205,5 +227,15 @@ export default {
 }
 .rel{
   position: relative;
+}
+.mw200{
+  min-width: 200px;
+}
+@media (max-width:600px) {
+  .w600{
+    width: 100%;
+    margin-top: 20px;
+    margin: 0;
+  }
 }
 </style>
