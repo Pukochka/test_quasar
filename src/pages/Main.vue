@@ -7,7 +7,7 @@
       <q-list separator bordered padding class="rounded-borders text-primary " >
 
         <q-item clickable v-ripple @click="openMain()">
-          <q-item-section avatar>
+          <q-item-section >
             <q-icon name="circle" size="12px" />
           </q-item-section>
 
@@ -16,10 +16,14 @@
       
         <q-item v-for="head in heads" :key="head.id" clickable v-ripple @click="openFilter(head)">
           <q-item-section avatar>
-            <q-icon name="circle" size="12px"/>
+            <q-badge color="blue q-pa-sm">
+              {{head.items.length}}
+            </q-badge>
           </q-item-section>
 
           <q-item-section class="text-subtitle1 text-weight-medium">{{head.design.title}}</q-item-section>
+
+          
         </q-item>
 
       </q-list>
@@ -28,18 +32,18 @@
     <div class="col-8 w600">
       <q-markup-table bordered class="q-mx-md q-mb-lg" >
         <thead>
-          <ul class="main-head q-px-md">
-            <li>Продукт</li>
-            <li>Осталось</li>
-            <li>1 штука</li>
-            <li>Покупка</li>
+          <ul class="main-head q-px-md q-my-sm">
+            <li class="custom_bor">Продукт</li>
+            <li class="custom_bor">Осталось</li>
+            <li class="custom_bor">1 штука</li>
+            <li class="custom_bor">Покупка</li>
           </ul>
         </thead>
         <tbody >
           <q-markup-table bordered class="q-ml-md q-mr-md full-width" >
             <tbody v-for="item in items" :key="item.id" class="rel">
               <tr>
-                <th colspan="5">
+                <th colspan="4">
                   <div class="row no-wrap items-center justify-center bggr">
                     <div class="text-h6 ">{{item.design.title}}</div>
                   </div>
@@ -51,7 +55,14 @@
                 <td class="text-right" >{{desc.setting.count}}</td>
                 <td class="text-right" >{{formatMoney(counting(desc).price.amount)}} {{desc.price.currency}}</td>
                 <td class="text-right" >
-                  <q-btn color="white" text-color="black" @click="openItem(item);openPay(desc);openDesc(desc);validate(openDesc(desc).setting.count)">Купить</q-btn>
+                  <q-btn color="white" text-color="black" 
+                  @click="num=0;
+                  openItem(item);
+                  openPay(desc);
+                  openDesc(desc);
+                  validate(openDesc(desc).setting.count)
+                  "
+                  >Купить</q-btn>
                 </td>
               </tr>
 
@@ -64,7 +75,7 @@
   
   </div>
   
-    <q-dialog v-model="pay" full-height>
+    <q-dialog  v-model="pay" full-height>
       <q-card class="column full-height full-width" style="width: 300px">
         <q-card-section>
           <div class="text-h6">Покупка</div>
@@ -82,16 +93,22 @@
           <q-input v-model="text" label="Telegram:" />
         </q-card-section>
 
-        <q-card-section class="col q-pt-none">
+        <!-- <q-card-section class="col q-pt-none">
           <q-input v-model="text" label="Контакты:" />
-        </q-card-section>
+        </q-card-section> -->
 
         <q-card-section class="col q-pt-none flex justify-between items-center">
           <q-badge color="blue q-ma-sm text-h6">
             Осталось : {{openDesc(desc).setting.count}}
           </q-badge>
 
-          <q-input type="number" @keydown="validate(openDesc(desc).setting.count);isHidden=false" @keyup="validate(openDesc(desc).setting.count)" @focus="counting(desc);" :min="openDesc(desc).setting.count - (openDesc(desc).setting.count - 1)" :max="openDesc(desc).setting.count" v-model="num" filled style="width: 200px"/>
+          <q-input type="number" 
+          @keydown="validate(openDesc(desc).setting.count)"
+          @keyup="validate(openDesc(desc).setting.count)"
+          @focus="counting(desc);" 
+          :min="openDesc(desc).setting.count - (openDesc(desc).setting.count - 1)" 
+          :max="openDesc(desc).setting.count" v-model="num" filled style="width: 200px"/>
+
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
@@ -102,15 +119,15 @@
           <q-input v-model="text" label="Код купона:" />
         </q-card-section>
 
-        <q-card-section class="col q-pt-none" color="green">
-          <q-badge color="blue q-ma-sm text-h6" v-bind:class="{hidden : isHidden}">
+        <q-card-section class="col q-pt-none">
+          <q-badge color="blue q-ma-sm text-h6" >
             К оплате: {{formatMoney(parseInt(counting(desc).price.amount)*num) }} {{desc.price.currency}}
           </q-badge>
           
         </q-card-section>
 
-        <q-card-actions align="center" class="bg-white text-teal">
-          <q-btn rounded flat label="Перейти к оплате" v-close-popup @click="pay = false; "/>
+        <q-card-actions align="center" class="bg-white text-blue">
+          <q-btn rounded flat label="Перейти к оплате"  @click="pay = false; "/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -203,6 +220,11 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.custom_bor{
+  border-radius: 5px;
+  border: solid 1px rgb(206, 204, 204);
+  padding: 4px;
+}
 .bg{
   background-color: #51bbff;
 }
