@@ -1,11 +1,11 @@
-<template>
+<template >
 <div class="text-h3 flex justify-center q-pa-md ">Товары</div>
 
   <div class="fit row wrap justify-center items-start content-start">
     
     <div class="mw200">
       <q-list separator bordered padding class="rounded-borders text-primary " >
-
+            
         <q-item clickable v-ripple @click="openMain()">
           <q-item-section >
             <q-icon name="circle" size="12px" />
@@ -13,7 +13,12 @@
 
           <q-item-section class="text-subtitle1 text-weight-medium">Все</q-item-section>
         </q-item>
-      
+
+        <q-skeleton class="q-ma-md" height="40px" v-if="items.length == 0"/>
+        <q-skeleton class="q-ma-md" height="40px" v-if="items.length == 0"/>
+        <q-skeleton class="q-ma-md" height="40px" v-if="items.length == 0"/>
+        <q-skeleton class="q-ma-md" height="40px" v-if="items.length == 0"/>
+
         <q-item v-for="head in heads" :key="head.id" clickable v-ripple @click="openFilter(head)">
           <q-item-section avatar>
             <q-badge color="blue q-pa-sm">
@@ -40,7 +45,11 @@
           </ul>
         </thead>
         <tbody >
-          <q-markup-table bordered class="q-ml-md q-mr-md full-width" >
+          <q-markup-table bordered class="q-ml-md q-mr-md full-width" @change="skeleton()">
+            <q-skeleton class="q-ma-md" height="150px" v-if="items.length == 0"/>
+            <q-skeleton class="q-ma-md" height="150px" v-if="items.length == 0"/>
+            <q-skeleton class="q-ma-md" height="150px" v-if="items.length == 0"/>
+            <q-skeleton class="q-ma-md" height="150px" v-if="items.length == 0"/>
             <tbody v-for="item in items" :key="item.id" class="rel">
               <tr>
                 <th colspan="4">
@@ -53,7 +62,7 @@
               <tr v-for="desc in item.items" :key="desc.id">
                 <td class="text-left" >{{desc.design.title}}</td>
                 <td class="text-right" >{{desc.setting.count}}</td>
-                <td class="text-right" >{{formatMoney(counting(desc).price.amount)}} {{desc.price.currency}}</td>
+                <td class="text-right" >{{formatMoney(openDesc(desc).price.amount)}} {{desc.price.currency}}</td>
                 <td class="text-right" >
                   <q-btn color="white" text-color="black" 
                   @click="num=0;
@@ -86,11 +95,11 @@
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
-          <q-input v-model="text" label="Email:" />
+          <q-input v-model="email" label="Email:" />
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
-          <q-input v-model="text" label="Telegram:" />
+          <q-input v-model="telegram" label="Telegram:" />
         </q-card-section>
 
         <!-- <q-card-section class="col q-pt-none">
@@ -105,9 +114,8 @@
           <q-input type="number" 
           @keydown="validate(openDesc(desc).setting.count)"
           @keyup="validate(openDesc(desc).setting.count)"
-          @focus="counting(desc);" 
           :min="openDesc(desc).setting.count - (openDesc(desc).setting.count - 1)" 
-          :max="openDesc(desc).setting.count" v-model="num" filled style="width: 200px"/>
+          :max="openDesc(desc).setting.count" v-model="num" filled style="width: 200px;height:50px !important;"/>
 
         </q-card-section>
 
@@ -116,12 +124,12 @@
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
-          <q-input v-model="text" label="Код купона:" />
+          <q-input v-model="sale" label="Код купона:" />
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
           <q-badge color="blue q-ma-sm text-h6" >
-            К оплате: {{formatMoney(parseInt(counting(desc).price.amount)*num) }} {{desc.price.currency}}
+            К оплате: {{formatMoney(parseInt(openDesc(desc).price.amount)*num) }} {{desc.price.currency}}
           </q-badge>
           
         </q-card-section>
@@ -142,7 +150,8 @@ export default {
     return{
       items:[],
       heads:[],
-      isHidden:true
+      isHidden:false,
+      r:[],
     }
     
   },
@@ -150,7 +159,9 @@ export default {
     return {
       separator: ref('horizontal'),
       pay: ref(false),
-      
+      email: ref(''),
+      telegram: ref(''),
+      sale: ref(''),
       num:ref({
         min:0,
         max:1,
@@ -174,20 +185,11 @@ export default {
       }
       
     },
-    nanPrice(price){
-      if(this.num !== NaN){
-        return price;
-      }
-    },
     openItem(item){
       this.item = item;
       return item
     },
     openDesc(desc){
-      this.desc = desc;
-      return desc;
-    },
-    counting(desc){
       this.desc = desc;
       return desc;
     },
@@ -199,6 +201,15 @@ export default {
       this.item = item;
       this.items = [];
       this.items.push(item);
+      console.log(this.r)
+    },
+    // skeleton(){
+    //   if (this.heads.length !== 0) {
+    //     this.isHidden = true
+    //   }
+    // },
+    res(r){
+      return r;
     },
     formatMoney(data){
       const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
@@ -212,8 +223,8 @@ export default {
             this.items.push(response.data.data[item])
             console.log(this.items)
           }
+          this.r = response;
         })
-        .catch(console.log('error'))
     }
   }      
 }
