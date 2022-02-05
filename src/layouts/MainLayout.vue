@@ -10,8 +10,8 @@
       </q-toolbar>
     <div class="flex justify-center">
       <q-tabs class="w920">
-        <q-route-tab to="/" label="Главная" />
-        <q-route-tab to="/contact" label="Контакты и техподдержка" />
+        <q-route-tab to="/" label="Таблица" />
+        <q-route-tab to="/contact" label="Элементы" />
         <q-route-tab to="/posts" label="Для поставщиков" />
         <q-route-tab to="/probl" label="Решение проблем" />
         <q-route-tab to="/agree" label="Соглашение" />
@@ -25,12 +25,12 @@
       <q-list separator bordered>
         <q-item clickable v-ripple to="/">
           
-          <q-item-section >Главная</q-item-section>
+          <q-item-section >Таблица</q-item-section>
 
         </q-item>
         <q-item clickable v-ripple to="/contact">
           
-          <q-item-section >Контакты и техподдержка</q-item-section>
+          <q-item-section >Элементы</q-item-section>
 
         </q-item>
         <q-item clickable v-ripple to="/posts">

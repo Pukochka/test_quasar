@@ -6,9 +6,13 @@
     <div class="mw200">
       <q-list separator bordered padding class="rounded-borders text-primary " >
             
-        <q-item clickable v-ripple @click="openMain()">
-          <q-item-section >
-            <q-icon name="circle" size="12px" />
+        <q-item 
+        clickable 
+        v-ripple 
+        @click="openMain()
+        ">
+          <q-item-section avatar>
+            <q-icon name="circle" size="8px" />
           </q-item-section>
 
           <q-item-section class="text-subtitle1 text-weight-medium">Все</q-item-section>
@@ -19,7 +23,14 @@
         <q-skeleton class="q-ma-md" height="40px" v-if="items.length == 0"/>
         <q-skeleton class="q-ma-md" height="40px" v-if="items.length == 0"/>
 
-        <q-item v-for="head in heads" :key="head.id" clickable v-ripple @click="openFilter(head)">
+        <q-item
+         v-for="head in heads"
+        :key="head.id" 
+        clickable 
+        v-ripple 
+        @click="openFilter(head)"
+        >
+
           <q-item-section avatar>
             <q-badge color="blue q-pa-sm">
               {{head.items.length}}
@@ -45,7 +56,7 @@
           </ul>
         </thead>
         <tbody >
-          <q-markup-table bordered class="q-ml-md q-mr-md full-width" @change="skeleton()">
+          <q-markup-table bordered class="q-ml-md q-mr-md full-width">
             <q-skeleton class="q-ma-md" height="150px" v-if="items.length == 0"/>
             <q-skeleton class="q-ma-md" height="150px" v-if="items.length == 0"/>
             <q-skeleton class="q-ma-md" height="150px" v-if="items.length == 0"/>
@@ -69,8 +80,7 @@
                   openItem(item);
                   openPay(desc);
                   openDesc(desc);
-                  validate(openDesc(desc).setting.count)
-                  "
+                  validate(openDesc(desc).setting.count)"
                   >Купить</q-btn>
                 </td>
               </tr>
@@ -115,7 +125,10 @@
           @keydown="validate(openDesc(desc).setting.count)"
           @keyup="validate(openDesc(desc).setting.count)"
           :min="openDesc(desc).setting.count - (openDesc(desc).setting.count - 1)" 
-          :max="openDesc(desc).setting.count" v-model="num" filled style="width: 200px;height:50px !important;"/>
+          :max="openDesc(desc).setting.count" 
+          v-model="num" 
+          filled 
+          style="width: 200px;height:50px !important;"/>
 
         </q-card-section>
 
@@ -177,13 +190,11 @@ export default {
     openPay(desc){
       this.desc = desc;
       this.pay = true;
-      console.log(this.num)
     },
     validate(count){
       if(this.num > count){
         this.num = count;
       }
-      
     },
     openItem(item){
       this.item = item;
@@ -203,14 +214,6 @@ export default {
       this.items.push(item);
       console.log(this.r)
     },
-    // skeleton(){
-    //   if (this.heads.length !== 0) {
-    //     this.isHidden = true
-    //   }
-    // },
-    res(r){
-      return r;
-    },
     formatMoney(data){
       const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
       return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
@@ -223,7 +226,6 @@ export default {
             this.items.push(response.data.data[item])
             console.log(this.items)
           }
-          this.r = response;
         })
     }
   }      
