@@ -1,19 +1,23 @@
 <template>
     <div class="justify-center">
+
       <div class="q-ma-md flex wrap justify-center">
 
-        <q-list class="flex wrap text-primary mw700">
+        <q-list bordered class="flex wrap text-primary mw700 rounded-borders">
 
-          <q-item class="hover"
+          <q-item class="borrad"
           clickable 
           v-ripple 
           @click="openMain()
           ">
             <q-item-section >
-              <q-icon name="circle" size="8px" />
+              {{allItems()}}
             </q-item-section>
 
-            <q-item-section class="text-subtitle1 text-weight-medium">Все</q-item-section>
+            <q-item-section class="text-subtitle1 text-weight-medium">
+              Все
+            </q-item-section>
+
           </q-item>
 
           <q-item 
@@ -22,131 +26,105 @@
           clickable 
           v-ripple 
           @click="openFilter(head)"
-          class=""
+          class="borrad"
           >
              
-            <q-item-section class="text-subtitle1 text-weight-medium">{{head.design.title}}</q-item-section>
+            <q-item-section class="text-subtitle1 text-weight-medium">
+              {{head.design.title}}
+            </q-item-section>
+
             <q-badge color="white" class="text-blue q-pa-sm">
               {{head.items.length}}
             </q-badge>
+            <q-separator vertical dark />
           </q-item>
 
         </q-list>
 
       </div>
 
-      <div class="mw900 " v-for="item in items" :key="item.id">
+      <div class="mw1000 " v-for="item in items" :key="item.id">
 
         <div class="text-h5 text-weight-bold q-pt-lg q-pb-sm">{{item.design.title}}</div>
 
         <div class="flex wrap" >
+
+          <skeleton :height='h.h80' v-if="items.length == 0"/>
           
-          <q-card class="my-card q-ma-sm" v-for="desc in item.items" :key="desc.id">
-            <q-card-section vertical>
-              <div class="bgc rounded-borders"></div>
+          <q-card class="q-ma-sm" style="width:300px;" v-for="desc in item.items" :key="desc.id">
+            
+              <div class="bgc"></div>
 
-              <q-card-section class="mw200">
+              <div class="mw200 text-h6 q-pa-sm q-pl-md word">
                 {{desc.design.title}}
-              </q-card-section>
-            </q-card-section>
+              </div>
 
-            <q-separator />
+            <div class="flex justify-between q-pb-sm items-center">
 
-            <q-card-actions class="justify-between">
-              <q-btn flat>
-                {{formatMoney(openDesc(desc).price.amount)}} {{desc.price.currency}}
-              </q-btn>
-              <q-btn flat color="primary"
-              @click="num=0;
+              <div class="text-subtitle2 q-pa-sm">
+                {{formatMoney(desc.price.amount)}} {{desc.price.currency}}
+              </div>
+
+              <q-btn @click="
               openItem(item);
-              openPay(desc);
               openDesc(desc);
-              validate(openDesc(desc).setting.count)"
+              openMore(desc);
+              " color="primary q-pa-sm" flat class="text-subtitle2">
+                Подробнее
+              </q-btn>
+
+              <q-btn flat color="primary q-pa-sm"
+                    @click="num=0;
+                    openItem(item);
+                    openPay(desc);
+                    openDesc(desc);
+                    validate(desc.setting.count)"
               >
                 Купить
               </q-btn>
-            </q-card-actions>
+
+            </div>
+
           </q-card>
 
         </div>
 
       </div>
-        
-      
 
+      <d-more :desc='openDesc(desc)' v-model="more"/>
+
+      <d-pay v-model="pay" :desc='desc' :item='item' :num='0'/>
+        
     </div>
     
-    <q-dialog  v-model="pay" full-height>
-      <q-card class="column full-height full-width" style="width: 300px">
-        <q-card-section>
-          <div class="text-h6">Покупка</div>
-        </q-card-section>
-
-        <q-card-section  class="col q-pt-none">
-          {{openItem(item).design.title}} : {{desc.design.title}}
-        </q-card-section>
-
-        <q-card-section class="col q-pt-none">
-          <q-input v-model="email" label="Email:" />
-        </q-card-section>
-
-        <q-card-section class="col q-pt-none">
-          <q-input v-model="telegram" label="Telegram:" />
-        </q-card-section>
-
-        <!-- <q-card-section class="col q-pt-none">
-          <q-input v-model="text" label="Контакты:" />
-        </q-card-section> -->
-
-        <q-card-section class="col q-pt-none flex justify-between items-center">
-          <q-badge color="blue q-ma-sm text-h6">
-            Осталось : {{openDesc(desc).setting.count}}
-          </q-badge>
-
-          <q-input type="number" 
-          @keydown="validate(openDesc(desc).setting.count)"
-          @keyup="validate(openDesc(desc).setting.count)"
-          :min="openDesc(desc).setting.count - (openDesc(desc).setting.count - 1)" 
-          :max="openDesc(desc).setting.count" 
-          v-model="num" 
-          filled 
-          style="width: 200px;height:50px !important;"/>
-
-        </q-card-section>
-
-        <q-card-section class="col q-pt-none">
-          <q-input v-model="text" label="Способ оплаты" />
-        </q-card-section>
-
-        <q-card-section class="col q-pt-none">
-          <q-input v-model="sale" label="Код купона:" />
-        </q-card-section>
-
-        <q-card-section class="col q-pt-none">
-          <q-badge color="blue q-ma-sm text-h6" >
-            К оплате: {{formatMoney(parseInt(openDesc(desc).price.amount)*num) }} {{desc.price.currency}}
-          </q-badge>
-          
-        </q-card-section>
-
-        <q-card-actions align="center" class="bg-white text-blue">
-          <q-btn rounded flat label="Перейти к оплате"  @click="pay = false; "/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    
 </template>
 
 <script>
 import {ref } from 'vue'
 import { axios } from 'boot/axios'
+import skeleton from 'components/skeleton'
+import dMore from 'components/dMore'
+import dPay from 'components/dPay'
+
 
 export default {
+  components:{
+    skeleton,
+    'd-more':dMore,
+    'd-pay':dPay
+  },
   data(){
     return{
       items:[],
       heads:[],
       isHidden:false,
-      r:[],
+      more: false,
+      h:{
+        h40:'40px',
+        h80:'80px',
+        h150:'150px',
+      },
     }
     
   },
@@ -154,13 +132,13 @@ export default {
     return {
       separator: ref('horizontal'),
       pay: ref(false),
+      
       email: ref(''),
       telegram: ref(''),
       sale: ref(''),
       num:ref({
         min:0,
         max:1,
-        
       }),
       lorem: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus, ratione eum minus fuga, quasi dicta facilis corporis magnam, suscipit at quo nostrum!',
     }
@@ -169,9 +147,17 @@ export default {
     this.onreadyStateChange();
   },
   methods:{
+    toFirstSumb(str){
+      this.new = str.toLowerCase();
+      return this.new;
+    },
     openPay(desc){
       this.desc = desc;
       this.pay = true;
+    },
+    openMore(desc){
+      this.desc = desc;
+      this.more = true;
     },
     validate(count){
       if(this.num > count){
@@ -194,11 +180,19 @@ export default {
       this.item = item;
       this.items = [];
       this.items.push(item);
-      console.log(this.r)
     },
     formatMoney(data){
-      const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
+      const numberValue = Number.prototype.toFixed.call(parseFloat(data))           
       return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+    },
+    allItems(){
+      let count = 0;
+      if(this.heads){
+        for(let head of this.heads){
+          count += head.items.length
+        }
+        return count;
+      }
     },
     async onreadyStateChange(){
         axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk','bot_id=30219&category_id=0')
@@ -217,16 +211,11 @@ export default {
 .mw700{
   max-width: 700px;
 }
-.mw900{
-  max-width: 900px;
-  margin: 0 auto;
-}
 .mw200{
   max-width: 200px;
 }
 .bgc{
-  width: 200px;
-  height: 150px;
+  height: 200px;
   background-color: $blue;
 }
 .hover:hover{

@@ -87,9 +87,6 @@ export default {
   .bg-grad{
     background: linear-gradient(315deg, hsla(217, 100%, 50%, 1) 55%, hsla(186, 100%, 69%, 1) 100%) ;
   }
-  .borrad{
-    border-radius: 5px;
-  }
   .mobile-none{
     display: none;
   }
