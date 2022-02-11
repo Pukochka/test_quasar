@@ -1,6 +1,10 @@
 <template >
 <div class="text-h3 flex justify-center q-pa-md ">Товары</div>
 
+  <div class="flex justify-center q-pa-md">
+
+  </div>
+
   <div class="fit row wrap justify-center items-start content-start">
     
     <div class="mw200">
@@ -34,18 +38,14 @@
             <q-badge color='gray q-my-sm'>
               {{head.items.length}}
             </q-badge>
-          
-
-          
-
-          
+    
         </q-item>
 
       </q-list>
     </div>
       
     <div class="col-8 w600">
-      <q-markup-table bordered class="q-mx-md q-mb-lg" >
+      <q-markup-table class="q-mx-md q-mb-lg" >
         <thead>
           <ul class="main-head q-px-md q-my-sm">
             <li class="">Продукт</li>
@@ -55,7 +55,7 @@
           </ul>
         </thead>
         <tbody >
-          <q-markup-table bordered class="q-ml-md q-mr-md full-width">
+          <q-markup-table class="q-ml-md q-mr-md full-width">
 
             <skeleton :height='h.h150' v-if="items.length == 0" />
 
@@ -74,11 +74,7 @@
                 <td class="text-right" >{{formatMoney(desc.price.amount)}} {{desc.price.currency}}</td>
                 <td class="text-right" >
                   <q-btn color="white" text-color="black" 
-                  @click="num=0;
-                  openItem(item);
-                  openPay(desc);
-                  openDesc(desc);
-                  validate(desc.setting.count)"
+                  @click="num=0;openPay(desc, item);"
                   >Купить</q-btn>
                 </td>
               </tr>
@@ -97,7 +93,7 @@
 </template>
 
 <script>
-import {ref } from 'vue'
+import { ref } from 'vue'
 import { axios } from 'boot/axios'
 import skeleton from 'components/skeleton'
 import dPay from 'components/dPay'
@@ -105,16 +101,12 @@ import dPay from 'components/dPay'
 export default {
   data(){
     return{
-      items:[],
       heads:[],
-      isHidden:false,
-      num:null,
       h:{
         h40:'40px',
         h150:'150px',
       },
     }
-    
   },
   components:{
     skeleton,
@@ -122,52 +114,34 @@ export default {
   },
   setup () {
     return {
+      items:ref([]),
       separator: ref('horizontal'),
       pay: ref(false),
-      
-      lorem: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus, ratione eum minus fuga, quasi dicta facilis corporis magnam, suscipit at quo nostrum!',
     }
   },
-  mounted(){
-    this.onreadyStateChange();
+  created(){
+    this.onreadyStateChange(0);
   },
-  
   methods:{
     allItems(){
       let count = 0;
       if(this.heads){
         for(let head of this.heads){
           count += head.items.length
-          console.log(head.items.length)
-          
         }
         return count;
       }
-      
     },
-    openPay(desc){
+    openPay(desc, item){
+      this.item = item;
       this.desc = desc;
       this.pay = true;
-    },
-    validate(count){
-      if(this.num > count){
-        this.num = count;
-      }
-    },
-    openItem(item){
-      this.item = item;
-      return item
-    },
-    openDesc(desc){
-      this.desc = desc;
-      return desc;
     },
     openMain(){
       this.items = [];
       this.items = this.heads
     },
     openFilter(item){
-      this.item = item;
       this.items = [];
       this.items.push(item)
     },
@@ -175,8 +149,9 @@ export default {
       const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
       return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
     },
-    async onreadyStateChange(){
-        axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk','bot_id=30219&category_id=0')
+    
+    async onreadyStateChange(category){
+        axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk',`bot_id=30219&category_id=${category}`)
         .then(response => {
           for(let item in response.data.data){
             this.heads.push(response.data.data[item])

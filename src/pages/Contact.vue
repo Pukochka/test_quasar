@@ -43,13 +43,11 @@
 
       </div>
 
-      <div class="mw1000 " v-for="item in items" :key="item.id">
+      <div class="mw1000" v-for="item in items" :key="item.id">
 
         <div class="text-h5 text-weight-bold q-pt-lg q-pb-sm">{{item.design.title}}</div>
 
         <div class="flex wrap" >
-
-          <skeleton :height='h.h80' v-if="items.length == 0"/>
           
           <q-card class="q-ma-sm" style="width:300px;" v-for="desc in item.items" :key="desc.id">
             
@@ -66,22 +64,19 @@
               </div>
 
               <q-btn @click="
-              openItem(item);
-              openDesc(desc);
-              openMore(desc);
-              " color="primary q-pa-sm" flat class="text-subtitle2">
+              openDialog(desc , item );
+              this.more = true;"
+              color="primary q-pa-sm"
+              flat
+              class="text-subtitle2">
                 Подробнее
               </q-btn>
 
               <q-btn flat color="primary q-pa-sm"
-                    @click="num=0;
-                    openItem(item);
-                    openPay(desc);
-                    openDesc(desc);
-                    validate(desc.setting.count)"
-              >
-                Купить
-              </q-btn>
+              @click="num=0;
+              openDialog(desc , item); 
+              this.pay = true;">
+              Купить</q-btn>
 
             </div>
 
@@ -91,7 +86,7 @@
 
       </div>
 
-      <d-more :desc='openDesc(desc)' v-model="more"/>
+      <d-more :desc='desc' v-model="more"/>
 
       <d-pay v-model="pay" :desc='desc' :item='item' :num='0'/>
         
@@ -103,74 +98,40 @@
 <script>
 import {ref } from 'vue'
 import { axios } from 'boot/axios'
-import skeleton from 'components/skeleton'
 import dMore from 'components/dMore'
 import dPay from 'components/dPay'
 
 
 export default {
   components:{
-    skeleton,
     'd-more':dMore,
     'd-pay':dPay
   },
   data(){
     return{
       items:[],
-      heads:[],
-      isHidden:false,
-      more: false,
-      h:{
-        h40:'40px',
-        h80:'80px',
-        h150:'150px',
-      },
+      heads: [],
     }
-    
   },
   setup () {
     return {
-      separator: ref('horizontal'),
+      more: ref(false),
+      isHidden:ref(false),
       pay: ref(false),
-      
       email: ref(''),
       telegram: ref(''),
       sale: ref(''),
-      num:ref({
-        min:0,
-        max:1,
-      }),
-      lorem: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus, ratione eum minus fuga, quasi dicta facilis corporis magnam, suscipit at quo nostrum!',
     }
   },
-  mounted(){
+  created(){
     this.onreadyStateChange();
   },
   methods:{
-    toFirstSumb(str){
-      this.new = str.toLowerCase();
-      return this.new;
-    },
-    openPay(desc){
-      this.desc = desc;
-      this.pay = true;
-    },
-    openMore(desc){
-      this.desc = desc;
-      this.more = true;
-    },
-    validate(count){
-      if(this.num > count){
-        this.num = count;
-      }
-    },
-    openItem(item){
+    openDialog(desc , item , dia){
       this.item = item;
-      return item
-    },
-    openDesc(desc){
       this.desc = desc;
-      return desc;
+      this.dia = dia ;
+      this.dia = true;
     },
     openMain(){
       this.items = [];
@@ -200,7 +161,6 @@ export default {
           for(let item in response.data.data){
             this.heads.push(response.data.data[item])
             this.items.push(response.data.data[item])
-            console.log(this.items)
           }
         })
     }
@@ -208,12 +168,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.mw700{
-  max-width: 700px;
-}
-.mw200{
-  max-width: 200px;
-}
 .bgc{
   height: 200px;
   background-color: $blue;

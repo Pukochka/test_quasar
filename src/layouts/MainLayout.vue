@@ -10,12 +10,12 @@
       </q-toolbar>
     <div class="flex justify-center">
       <q-tabs class="w920">
-        <q-route-tab to="/" label="Таблица" />
+        <!-- <q-route-tab to="/" label="Таблица" />
         <q-route-tab to="/contact" label="Элементы" />
-        <q-route-tab to="/posts" label="Для поставщиков" />
-        <q-route-tab to="/probl" label="Решение проблем" />
-        <q-route-tab to="/agree" label="Соглашение" />
-        <q-route-tab to="/review" label="Отзывы" />
+        <q-route-tab to="/posts" label="Для поставщиков" /> -->
+        <q-route-tab to="/probl" label="Магазин" />
+        <!-- <q-route-tab to="/agree" label="Соглашение" />
+        <q-route-tab to="/review" label="Отзывы" /> -->
       </q-tabs>
     </div>
     
@@ -23,7 +23,7 @@
 
     <q-drawer v-model="rightDrawerOpen" side="right" bordered class="mobile-none mobile-draw ">
       <q-list separator bordered>
-        <q-item clickable v-ripple to="/">
+        <!-- <q-item clickable v-ripple to="/">
           
           <q-item-section >Таблица</q-item-section>
 
@@ -37,13 +37,13 @@
           
           <q-item-section >Для поставщиков</q-item-section>
 
-        </q-item>
+        </q-item> -->
         <q-item clickable v-ripple to="/probl">
           
-          <q-item-section >Решение проблем</q-item-section>
+          <q-item-section >Магазин</q-item-section>
 
         </q-item>
-        <q-item clickable v-ripple to="/agree">
+        <!-- <q-item clickable v-ripple to="/agree">
           
           <q-item-section >Соглашение</q-item-section>
 
@@ -52,7 +52,7 @@
           
           <q-item-section >Отзывы</q-item-section>
 
-        </q-item>
+        </q-item> -->
       </q-list>
     </q-drawer>
 
