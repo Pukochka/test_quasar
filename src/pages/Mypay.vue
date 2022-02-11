@@ -1,27 +1,56 @@
 <template>
-    <div class="flex justify-center">
-    <h5>Мои покупки</h5>
-  </div>
+  <q-card class="column q-pa-md" style="heigth: 600px">
+    <div class="flex justify-between">
+    <div class="text-h5 custom-header">Покупка</div>
+      <q-btn flat round dense icon="close" v-close-popup @click="num=1"/>
+    </div>
+    <q-separator horizontal class="custom-separator"/>
+    <div  class="col q-pt-none text-h6">
+      {{item.design.title}} : {{desc.design.title}}
+    </div>
 
-    <div class="justify-center row">
-      
-       <q-card class="my-card " style="">
+    <div class="col q-pt-none">
+      <q-input dense v-model="email" label="Email:" />
+    </div>
 
-        <q-card-section>
-          <q-input v-model="text" label="Ваш email" style="width:300px;"/>
-        </q-card-section>
+    <div class="col q-pt-none">
+      <q-input dense v-model="telegram" label="Telegram:" />
+    </div>
 
-        <q-card-section>
-          <q-input v-model="text" label="Пароль" style="width:300px;"/>
-        </q-card-section>
-        
-        <q-card-section class="flex justify-center ">
-          <q-btn color="white" text-color="black" label="Отправить" />
-          
-        </q-card-section>
-      </q-card>
+    <div class="col q-pt-none flex justify-between items-center">
+      <q-badge color="blue q-ma-sm text-h6">
+          Осталось : {{desc.setting.count}}
+      </q-badge>
+
+      <q-input type="number" 
+      @keydown="validate(desc.setting.count)"
+      @keyup="validate(desc.setting.count)"
+      :min="desc.setting.count - (desc.setting.count - 1)" 
+      :max="desc.setting.count" 
+      v-model='num'  
+      dense
+      style="width: 200px;height:30px !important;"/>
 
     </div>
+
+    <div class="col q-pt-none">
+    <q-input dense v-model="text" label="Способ оплаты" />
+    </div>
+
+    <div class="col q-pt-none">
+    <q-input dense v-model="sale" label="Код купона:" />
+    </div>
+
+    <div class="col q-pt-none">
+    <q-badge color="blue q-ma-sm text-h6" >
+        К оплате: {{formatMoney(parseInt(desc.price.amount)*num) }} {{desc.price.currency}}
+    </q-badge>
+    </div>
+
+    <q-card-actions align="center" class="bg-white text-blue">
+      <q-btn rounded flat label="Перейти к оплате"  v-close-popup @click="num=1"/>
+    </q-card-actions>
+</q-card>
 </template>
 
 <script>
@@ -31,9 +60,7 @@ export default {
   setup () {
     return {
       
-      lorem: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus, ratione eum minus fuga, quasi dicta facilis corporis magnam, suscipit at quo nostrum!',
-      header: ref(''),
-      description: ref(''),
+      
     }
   },
   methods:{

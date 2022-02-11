@@ -1,60 +1,80 @@
 <template>
-<div class="flex justify-center">
-  <q-btn class="q-ma-sm" color="primary" label="Все" @click="products = [],getProducts(0)" />
+<div class="mw1000 flex">
+  <q-btn flat class="q-ma-sm" color="primary" label="Все" @click="products = [],getProducts(0)" />
+  <!-- <q-input rounded borderless v-model="searchItem" input-class="text-left" class="custom-input q-ma-none">
+          <template v-slot:append>
+            <q-icon v-if="searchItem === ''" name="search" />
+            <q-icon v-else name="clear" class="cursor-pointer" @click="searchItem = ''" />
+          </template>
+  </q-input> -->
 </div>
-<div class="q-pa-md justify-center col mw700">
-  <div class="col" v-for="prod in products" :key="prod.id">
-      <p class="text-h5 flex justify-center items-center colorD">{{prod.design.title}}</p>
-      <div class="row flexdir">
+<!-- <q-banner v-model="error">
+  <p>Ошибка загрузки.</p>
+  <p>Пожалуйста, обновите страничку!</p>
+</q-banner> -->
+<div class="q-pa-md justify-center col mw1000">
+  <div class="col " v-for="prod in products" :key="prod.id">
+      <p class="text-h5 flex justify-start items-center custom-header q-mb-sm q-ml-sm q-mt-xl">{{prod.design.title}}</p>
+
+      <q-separator horizontal class="custom-separator"/>
+
+      <div class="row wrap q-pt-md " >
         <q-banner  
-        rounded
-        class="q-ma-sm bg-grey-3 flex justify-beetween"
+        rounded style="width:300px;"
+        class="q-ma-sm rounded-borders bg-grey-1 custom-border"
         v-for="item in prod.items" :key="item.id"
         >
-
-          
-
-          <div class="text-h6">
-            {{definesType(item)}}
-            <q-badge label="Подкатегория" class="sub-category q-mt-none" v-if="item.type == 0"/>
+          <div class="text-h6 flex justify-between">
+            {{item.design.title}}
+            <!-- <q-checkbox
+              v-model="val"
+              checked-icon="star"
+              unchecked-icon="star_border"
+              
+            /> -->
           </div>
 
-          <template v-slot:action>
+          <t-desc :item='item'/>
+
+          <template v-slot:action class="flex justify-between">
             <div class="price" v-if="item.type !== 0">
-              {{formatMoney(item.price.amount) + ' ' + item.price.currency}}
+              {{formatMoney(item.price.amount) + ' ' + formatPrice(item.price.currency)}}
             </div>
-            <q-btn color="primary" label="Купить" @click="openPay(prod,item)" v-if="item.type !== 0" />
+            <q-btn flat color="primary" label="Купить" v-if="item.type !== 0" />
 
-            <q-btn color="primary" label="Смотреть" @click="openSubCategory(item.id , item.category_id )" v-if="item.type == 0" />
+            <q-btn flat color="primary" label="Смотреть" @click="openSubCategory(item.id , item.category_id )" v-if="item.type == 0" />
           </template>
-
-          
 
         </q-banner>
       </div>
       
   </div>
 </div>
-    <d-pay v-model="pay" :desc='item' :item='prod' :num='1'/>
 </template>
 
 <script>
 import { reactive, ref } from 'vue'
 import { axios } from 'boot/axios'
 import dPay from 'src/components/dPay.vue'
+import typeDescription from 'src/components/typeDescription.vue'
 
 export default {
   components:{
-    'd-pay': dPay
+    't-desc': typeDescription,
+    // 'd-pay': dPay,
   },
   data(){
     return{
-      products:[],
+      
     }
   },
   setup () {
     return {
-      pay: ref(false)
+      products:ref([]),
+      pay: ref(false),
+      error:ref(false),
+      searchItem:ref(''),
+      val: ref(true)
     }
   },
   created(){
@@ -64,7 +84,7 @@ export default {
     openPay(prod,item){
       this.prod = prod;
       this.item = item;
-      this.pay = true;
+      // this.pay = true;
     },
     async openSubCategory(id ,category){
 
@@ -80,12 +100,26 @@ export default {
       
       
     },
-    definesType(element){
-      if(element.type !== 0){
-        return element.design.title
-      }else{
-        return element.design.title
+    formatPrice(data){
+      let val = '';
+      switch(data){
+        case ('RUB'):
+          val = '₽';
+          break;
+        case ('USD'):
+          val = '$';
+          break;
+        case ('EUR'):
+          val = '€';
+          break;
+        case ('UAH'):
+          val = '₴';
+          break;
+        case ('KZT'):
+          val = '₸';
+          break;              
       }
+      return val;
     },
     formatMoney(data){
       const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
@@ -96,44 +130,47 @@ export default {
       axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk',`bot_id=30219&category_id=${category}`)
       .then(response => {
         for(let item in response.data.data){
-          
           this.products.push(response.data.data[item])
-          
         }
       })
+      // .catch(error =>{
+      //   this.error = true
+      // })
       
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+.custom{
+  &-header{
+    color:rgb(75, 143, 233);
+    font-weight: 700;
+  }
+  &-border{
+    border: 1px solid #0000001f;
+  }
+  &-input{
+    background-color: rgb(206, 200, 200);
+  }
+
+  
+}
 .q-banner__actions.col-all .q-btn-item {
   margin: 0 !important;
 }
 .price{
-  background-color: $primary;
-  color: white;
+  color: rgb(126, 123, 123);
   padding: 8px;
-  border-radius: 3px;
-  margin-right: 10px;
 }
 .q-btn{
   text-transform: none !important;
+  font-weight: 600;
 }
 .relative{
   position: relative;
 }
-.sub-category{
-  transform: translateY(-10px);
-  background-color: rgb(112, 131, 189);
-  font-size: 13px;
-}
 .flexdir{
   flex-direction: column;
-}
-.colorD{
-  border-radius: 6px;
-  height: 60px;
-  background-color: rgb(219, 219, 219);
 }
 </style>

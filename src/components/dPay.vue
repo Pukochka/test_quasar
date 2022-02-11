@@ -2,20 +2,20 @@
     <q-dialog persistent >
       <q-card class="column q-pa-md" style="heigth: 600px">
           <div class="flex justify-between">
-          <div class="text-h4">Покупка</div>
+          <div class="text-h5 custom-header">Покупка</div>
             <q-btn flat round dense icon="close" v-close-popup @click="num=1"/>
           </div>
-
+          <q-separator horizontal class="custom-separator"/>
           <div  class="col q-pt-none text-h6">
             {{item.design.title}} : {{desc.design.title}}
           </div>
 
           <div class="col q-pt-none">
-            <q-input v-model="email" label="Email:" />
+            <q-input dense v-model="email" label="Email:" />
           </div>
 
           <div class="col q-pt-none">
-            <q-input v-model="telegram" label="Telegram:" />
+            <q-input dense v-model="telegram" label="Telegram:" />
           </div>
 
           <div class="col q-pt-none flex justify-between items-center">
@@ -23,23 +23,23 @@
                 Осталось : {{desc.setting.count}}
             </q-badge>
 
-            <input type="number" 
+            <q-input type="number" 
             @keydown="validate(desc.setting.count)"
             @keyup="validate(desc.setting.count)"
             :min="desc.setting.count - (desc.setting.count - 1)" 
             :max="desc.setting.count" 
             v-model='num'  
-            filled 
+            dense
             style="width: 200px;height:30px !important;"/>
 
           </div>
 
           <div class="col q-pt-none">
-          <q-input v-model="text" label="Способ оплаты" />
+          <q-input dense v-model="text" label="Способ оплаты" />
           </div>
 
           <div class="col q-pt-none">
-          <q-input v-model="sale" label="Код купона:" />
+          <q-input dense v-model="sale" label="Код купона:" />
           </div>
 
           <div class="col q-pt-none">
@@ -91,3 +91,11 @@ export default {
     }
 }
 </script>
+<style lang="scss" scoped>
+.custom{
+  &-header{
+    color:rgb(75, 143, 233);
+    font-weight: 700;
+  }
+}  
+</style>
