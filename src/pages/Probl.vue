@@ -1,37 +1,45 @@
 <template>
 <div class="mw1000 flex">
-  <q-btn flat class="q-ma-sm" color="primary" label="Все" @click="products = [],getProducts(0)" />
-  <!-- <q-input rounded borderless v-model="searchItem" input-class="text-left" class="custom-input q-ma-none">
-          <template v-slot:append>
-            <q-icon v-if="searchItem === ''" name="search" />
-            <q-icon v-else name="clear" class="cursor-pointer" @click="searchItem = ''" />
-          </template>
-  </q-input> -->
+  <q-btn flat class="q-ma-sm" color="primary" label="Все" @click="products = [] , getProducts(null , 0 , false)" />
+  <!-- <q-btn color="primary" icon="check" label="OK" @click="cl()" /> -->
 </div>
-<!-- <q-banner v-model="error">
-  <p>Ошибка загрузки.</p>
-  <p>Пожалуйста, обновите страничку!</p>
-</q-banner> -->
 <div class="q-pa-md justify-center col mw1000">
-  <div class="col " v-for="prod in products" :key="prod.id">
-      <p class="text-h5 flex justify-start items-center custom-header q-mb-sm q-ml-sm q-mt-xl">{{prod.design.title}}</p>
+  <div class="col " v-for="prod in products" :key="prod.id" >
+      <p class="text-h5 flex justify-start items-center custom-header q-mb-sm q-ml-sm q-mt-xl">
+        {{prod.design.title}}
+        </p>
 
       <q-separator horizontal class="custom-separator"/>
 
       <div class="row wrap q-pt-md " >
         <q-banner  
         rounded style="width:300px;"
-        class="q-ma-sm rounded-borders bg-grey-1 custom-border"
-        v-for="item in prod.items" :key="item.id"
+        class="q-ma-sm rounded-borders bg-grey-1 custom-border relative"
+        v-for="(item , index) in prod.items" :key="index"
         >
           <div class="text-h6 flex justify-between">
+            
             {{item.design.title}}
-            <!-- <q-checkbox
-              v-model="val"
-              checked-icon="star"
-              unchecked-icon="star_border"
-              
-            /> -->
+            <q-btn 
+              flat 
+              round 
+              class="custom-favorite"
+              @click="addInBasket(item.id , item);" 
+              ref="fav"
+              :class="{color : favorite_id.includes(item.id)}" 
+              v-if="item.type !== 0">
+              <q-icon name="shopping_cart" size="16px"/>
+            </q-btn>
+
+            <q-btn 
+              flat 
+              round 
+              class="custom-favorite"
+              v-if="item.type == 0">
+              <q-icon name="more_horiz" size="20px"/>
+            </q-btn>
+            
+
           </div>
 
           <t-desc :item='item'/>
@@ -42,7 +50,8 @@
             </div>
             <q-btn flat color="primary" label="Купить" v-if="item.type !== 0" />
 
-            <q-btn flat color="primary" label="Смотреть" @click="openSubCategory(item.id , item.category_id )" v-if="item.type == 0" />
+            <q-btn flat color="primary" label="Смотреть" 
+            @click="products = []; getProducts(item.id,  item.category_id , true)" v-if="item.type == 0" />
           </template>
 
         </q-banner>
@@ -53,51 +62,72 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue'
+import { reactive, ref, renderList } from 'vue'
 import { axios } from 'boot/axios'
-import dPay from 'src/components/dPay.vue'
 import typeDescription from 'src/components/typeDescription.vue'
 
 export default {
   components:{
-    't-desc': typeDescription,
-    // 'd-pay': dPay,
+    't-desc': typeDescription, 
   },
   data(){
     return{
-      
+      products : [],
+      validProd : [],
     }
   },
   setup () {
     return {
-      products:ref([]),
-      pay: ref(false),
-      error:ref(false),
-      searchItem:ref(''),
-      val: ref(true)
+      
+      favorite_id:ref([]),
+      favorite_item:ref([]),
+
+      sel:ref([])
     }
   },
+  mounted(){
+    
+    
+
+  },
   created(){
-    this.getProducts(0);
+    this.getProducts(null , 0 , false)
+  
+    const favorite_id = localStorage.getItem('favorite_id');
+    const favorite_item = localStorage.getItem('favorite_item');
+    
+    if(favorite_id){
+      this.favorite_id = JSON.parse(favorite_id);
+      console.log(this.favorite_id)
+    }
+
+    if(favorite_item){
+      this.favorite_item = JSON.parse(favorite_item);
+      for(let item of this.favorite_item){
+        console.log(JSON.parse(item))
+        // this.favorite_item.push(JSON.parse(item))
+      }
+      console.log(this.favorite_item)
+    }
+    
   },
   methods:{
-    openPay(prod,item){
-      this.prod = prod;
-      this.item = item;
-      // this.pay = true;
+    cl(){
+      window.localStorage.clear();
     },
-    async openSubCategory(id ,category){
+    addInBasket(selected_id , selected_item ){
 
-      this.products = [];
+      !this.favorite_id.includes(selected_id) ? 
+      this.favorite_id.push(selected_id) : this.favorite_id = this.favorite_id.filter(mas => mas !== selected_id)
 
-      axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk',`bot_id=30219&category_id=${category}`)
-      .then(response => {
-        for(let item in response.data.data){
-          this.products.push(response.data.data[item])
-        }
-        this.products = this.products.filter(prod => prod.type == 0 && prod.id == id)
-      })
-      
+      !this.favorite_item.includes(JSON.stringify(selected_item)) ? 
+      this.favorite_item.push(JSON.stringify(selected_item)) : this.favorite_item = this.favorite_item.filter(mas => mas !== JSON.stringify(selected_item))
+
+      localStorage.setItem('favorite_id',JSON.stringify(this.favorite_id))
+      localStorage.setItem('favorite_item',JSON.stringify(this.favorite_item))
+
+      console.log(localStorage.getItem('favorite_item'))
+      console.log(this.favorite_item)
       
     },
     formatPrice(data){
@@ -125,23 +155,30 @@ export default {
       const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
       return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
     },
-    async getProducts(category){
-     
-      axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk',`bot_id=30219&category_id=${category}`)
-      .then(response => {
-        for(let item in response.data.data){
-          this.products.push(response.data.data[item])
-        }
-      })
-      // .catch(error =>{
-      //   this.error = true
-      // })
-      
-    }
+    async getProducts(id, category , subCategory){
+      this.products = [];
+
+       axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk',`bot_id=30219&category_id=${category}`)
+        .then(response => {
+
+          for(let item in response.data.data){
+            this.products.push(response.data.data[item])
+            
+          }
+
+          if(subCategory){
+            this.products = this.products.filter(prod => prod.type == 0 && prod.id == id)
+          }
+        })
+    },
+    
   }
 }
 </script>
 <style lang="scss" scoped>
+.color{
+  color: $primary;
+}
 .custom{
   &-header{
     color:rgb(75, 143, 233);
@@ -153,7 +190,11 @@ export default {
   &-input{
     background-color: rgb(206, 200, 200);
   }
-
+  &-favorite{
+    position: absolute;
+    right:3px;
+    top: 3px;
+  }
   
 }
 .q-banner__actions.col-all .q-btn-item {
