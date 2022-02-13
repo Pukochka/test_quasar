@@ -4,14 +4,14 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/Main.vue') },
+      { path: '/main', component: () => import('src/pages/Main.vue') },
       { path: '/review', component: () => import('src/pages/Review.vue') },
       { path: '/posts', component: () => import('src/pages/Posts.vue') },
-      { path: '/agree', component: () => import('src/pages/Agree.vue') },
+      
       { path: '/contact', component: () => import('src/pages/Contact.vue') },
-      { path: '/probl', component: () => import('src/pages/Probl.vue') },
-      { path: '/signin', component: () => import('src/pages/SignIn.vue') },
-      { path: '/register', component: () => import('src/pages/Register.vue') },
+      { path: '/', component: () => import('src/pages/Probl.vue') },
+      
+      
       { path: '/mypay', component: () => import('src/pages/Mypay.vue') },
     ]
   },

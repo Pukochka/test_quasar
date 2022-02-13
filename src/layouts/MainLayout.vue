@@ -10,10 +10,14 @@
       </q-toolbar>
     <div class="flex justify-center">
       <q-tabs class="w920">
-        <!-- <q-route-tab to="/" label="Таблица" />
-        <q-route-tab to="/contact" label="Элементы" />
+        <q-route-tab to="/" label="Магазин" />
+        <!-- <q-route-tab to="/contact" label="Элементы" />
         <q-route-tab to="/posts" label="Для поставщиков" /> -->
-        <q-route-tab to="/probl" label="Магазин" />
+        <q-route-tab to="/mypay" label="Корзина" >
+          <!-- <q-badge class="custom-badge" color="white" text-color="black">
+            {{count.length}}
+          </q-badge> -->
+        </q-route-tab>
         <!-- <q-route-tab to="/agree" label="Соглашение" />
         <q-route-tab to="/review" label="Отзывы" /> -->
       </q-tabs>
@@ -38,9 +42,14 @@
           <q-item-section >Для поставщиков</q-item-section>
 
         </q-item> -->
-        <q-item clickable v-ripple to="/probl">
+        <q-item clickable v-ripple to="/">
           
           <q-item-section >Магазин</q-item-section>
+
+        </q-item>
+        <q-item clickable v-ripple to="/mypay">
+          
+          <q-item-section >Корзина</q-item-section>
 
         </q-item>
         <!-- <q-item clickable v-ripple to="/agree">
@@ -70,20 +79,31 @@
 import { ref } from 'vue'
 
 export default {
+
   setup () {
     const rightDrawerOpen = ref(false)
-
+    const data = localStorage.getItem('favorite_item')
+    let mass = JSON.parse(data)
     return {
       rightDrawerOpen,
+      count : mass,
       toggleRightDrawer () {
         rightDrawerOpen.value = !rightDrawerOpen.value
       }
       
     }
+  },
+  created(){
+     
   }
 }
 </script>
 <style lang="scss" scoped>
+  .custom-badge{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
   .bg-grad{
     background: linear-gradient(315deg, hsla(217, 100%, 50%, 1) 55%, hsla(186, 100%, 69%, 1) 100%) ;
   }
