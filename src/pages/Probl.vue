@@ -1,7 +1,7 @@
 <template>
 <div class="mw1000 flex">
   <q-btn flat class="q-ma-sm" color="primary" label="Все" @click="products = [] , getProducts(null , 0 , false)" />
-  <!-- <q-btn color="primary" icon="check" label="OK" @click="cl()" /> -->
+  <!-- <q-input v-model="filter" type="text" label="Фильтр" /> -->
 </div>
 <div class="q-pa-md justify-center col mw1000">
   <div class="col " v-for="prod in products" :key="prod.id" >
@@ -21,6 +21,7 @@
             
             {{item.design.title}}
             <q-btn 
+              title="Добавить в корзину"
               flat 
               round 
               class="custom-favorite"
@@ -72,48 +73,40 @@ export default {
   },
   data(){
     return{
-      products : [],
-      validProd : [],
+      filter: ''
     }
   },
   setup () {
     return {
-      
+      products : ref([]),
       favorite_id:ref([]),
       favorite_item:ref([]),
-
-      sel:ref([])
+      
     }
   },
-  mounted(){
-    
-    
-
-  },
   created(){
-    this.getProducts(null , 0 , false)
+    const windowURL = Object.fromEntries(new URL(window.location).searchParams.entries()) 
+    console.log(windowURL)
+
+    if(windowURL.subCategory){
+      windowURL.subCategory == '0' ?
+      this.getProducts(windowURL.id , windowURL.subCategory, false) :
+      this.getProducts(windowURL.id , windowURL.subCategory, true)
+    }else{
+      this.getProducts(null , 0 , false)
+    }
+    
   
     const favorite_id = localStorage.getItem('favorite_id');
-    const favorite_item = localStorage.getItem('favorite_item');
     
     if(favorite_id){
       this.favorite_id = JSON.parse(favorite_id);
-      console.log(this.favorite_id)
-    }
-
-    if(favorite_item){
-      this.favorite_item = JSON.parse(favorite_item);
-      for(let item of this.favorite_item){
-        console.log(JSON.parse(item))
-        // this.favorite_item.push(JSON.parse(item))
-      }
-      console.log(this.favorite_item)
     }
     
   },
   methods:{
-    cl(){
-      window.localStorage.clear();
+    filteredProduts(){
+      return this.products.filter(prod => prod.items.filter(item => item.design.title.includes(this.filter) ))
     },
     addInBasket(selected_id , selected_item ){
 
@@ -124,11 +117,7 @@ export default {
       this.favorite_item.push(JSON.stringify(selected_item)) : this.favorite_item = this.favorite_item.filter(mas => mas !== JSON.stringify(selected_item))
 
       localStorage.setItem('favorite_id',JSON.stringify(this.favorite_id))
-      localStorage.setItem('favorite_item',JSON.stringify(this.favorite_item))
-
-      console.log(localStorage.getItem('favorite_item'))
-      console.log(this.favorite_item)
-      
+      localStorage.setItem('favorite_item',JSON.stringify(this.favorite_item))    
     },
     formatPrice(data){
       let val = '';
@@ -156,22 +145,23 @@ export default {
       return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
     },
     async getProducts(id, category , subCategory){
-      this.products = [];
+
+      window.history.pushState(null , document.title , `${window.location.pathname}?subCategory=${category}&id=${id}`);
 
        axios.post('https://api.bot-t.ru/v1/shop/category/view?token=5229498662:AAH6wu0z-uButJQfzT5jAUfjzROfNUTLDGk',`bot_id=30219&category_id=${category}`)
         .then(response => {
 
           for(let item in response.data.data){
             this.products.push(response.data.data[item])
-            
           }
 
           if(subCategory){
             this.products = this.products.filter(prod => prod.type == 0 && prod.id == id)
           }
+
+          console.log(this.products)
         })
     },
-    
   }
 }
 </script>
