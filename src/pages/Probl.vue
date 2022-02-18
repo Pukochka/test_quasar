@@ -26,7 +26,7 @@
               round 
               class="custom-favorite"
               @click="addInBasket(item.id , item);" 
-              ref="fav"
+              
               :class="{color : favorite_id.includes(item.id)}" 
               v-if="item.type !== 0">
               <q-icon name="shopping_cart" size="16px"/>
@@ -47,7 +47,7 @@
 
           <template v-slot:action class="flex justify-between">
             <div class="price" v-if="item.type !== 0">
-              {{formatMoney(item.price.amount) + ' ' + formatPrice(item.price.currency)}}
+              <price :item='item'/>
             </div>
             <q-btn flat color="primary" label="Купить" v-if="item.type !== 0" />
 
@@ -66,10 +66,12 @@
 import { reactive, ref, renderList } from 'vue'
 import { axios } from 'boot/axios'
 import typeDescription from 'src/components/typeDescription.vue'
+import price from 'src/components/price.vue'
 
 export default {
   components:{
     't-desc': typeDescription, 
+    'price': price, 
   },
   data(){
     return{
@@ -81,12 +83,12 @@ export default {
       products : ref([]),
       favorite_id:ref([]),
       favorite_item:ref([]),
-      
     }
   },
   created(){
-    const windowURL = Object.fromEntries(new URL(window.location).searchParams.entries()) 
-    console.log(windowURL)
+    const windowURL = Object.fromEntries(new URL(window.location).searchParams.entries()) ,
+          favorite_id = localStorage.getItem('favorite_id'),
+          favorite_item = localStorage.getItem('favorite_item');
 
     if(windowURL.subCategory){
       windowURL.subCategory == '0' ?
@@ -96,18 +98,14 @@ export default {
       this.getProducts(null , 0 , false)
     }
     
-  
-    const favorite_id = localStorage.getItem('favorite_id');
+    favorite_id ? this.favorite_id = JSON.parse(favorite_id) : {}
     
-    if(favorite_id){
-      this.favorite_id = JSON.parse(favorite_id);
-    }
+
+    favorite_item ? this.favorite_item =JSON.parse(favorite_item) : {}
+    
     
   },
   methods:{
-    filteredProduts(){
-      return this.products.filter(prod => prod.items.filter(item => item.design.title.includes(this.filter) ))
-    },
     addInBasket(selected_id , selected_item ){
 
       !this.favorite_id.includes(selected_id) ? 
@@ -118,32 +116,9 @@ export default {
 
       localStorage.setItem('favorite_id',JSON.stringify(this.favorite_id))
       localStorage.setItem('favorite_item',JSON.stringify(this.favorite_item))    
+  
     },
-    formatPrice(data){
-      let val = '';
-      switch(data){
-        case ('RUB'):
-          val = '₽';
-          break;
-        case ('USD'):
-          val = '$';
-          break;
-        case ('EUR'):
-          val = '€';
-          break;
-        case ('UAH'):
-          val = '₴';
-          break;
-        case ('KZT'):
-          val = '₸';
-          break;              
-      }
-      return val;
-    },
-    formatMoney(data){
-      const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
-      return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
-    },
+    
     async getProducts(id, category , subCategory){
 
       window.history.pushState(null , document.title , `${window.location.pathname}?subCategory=${category}&id=${id}`);

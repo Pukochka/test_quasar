@@ -12,7 +12,7 @@
           <t-desc :item='item'/>
         </div>
         <div class=" text-grey">
-         {{formatMoney(item.price.amount) + ' ' + formatPrice(item.price.currency)}}
+         <price :item='item'/>
         </div>
         
       </q-card-section>
@@ -23,6 +23,7 @@
         <q-space />
 
         <q-btn
+          v-if="item.design.rules"
           color="grey"
           round
           flat
@@ -47,13 +48,16 @@
 <script>
 import { ref } from 'vue'
 import typeDescription from 'src/components/typeDescription.vue'
+import price from 'src/components/price.vue'
 
 export default {
   components:{
     't-desc': typeDescription, 
+    'price': price, 
   },
   setup () {
     return {
+      sel:null,
       expanded: ref(false),
       favorite_item:ref([]),
       favorite_current:ref([]),
@@ -65,37 +69,12 @@ export default {
     if(favorite_item){
       this.favorite_item = JSON.parse(favorite_item);
       for(let item of this.favorite_item){
-        console.log(JSON.parse(item))
         this.favorite_current.push(JSON.parse(item))
       }
     }
   },
   methods:{
-    formatPrice(data){
-      let val = '';
-      switch(data){
-        case ('RUB'):
-          val = '₽';
-          break;
-        case ('USD'):
-          val = '$';
-          break;
-        case ('EUR'):
-          val = '€';
-          break;
-        case ('UAH'):
-          val = '₴';
-          break;
-        case ('KZT'):
-          val = '₸';
-          break;              
-      }
-      return val;
-    },
-    formatMoney(data){
-      const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
-      return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
-    },
+    
   }
 }
 </script>
