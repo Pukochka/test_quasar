@@ -45,15 +45,17 @@
 
           <t-desc :item='item'/>
 
-          <template v-slot:action class="flex justify-between">
-            <div class="price" v-if="item.type !== 0">
+          <template class="flex justify-between q-pt-lg items-center">
+            <div v-if="item.type !== 0">
+
               <price :item='item'/>
             </div>
+            
             <q-btn flat color="primary" label="Купить" v-if="item.type !== 0" />
 
             <q-btn flat color="primary" label="Смотреть" 
             @click="products = []; getProducts(item.id,  item.category_id , true)" v-if="item.type == 0" />
-          </template>
+          </template  >
 
         </q-banner>
       </div>
@@ -116,7 +118,6 @@ export default {
 
       localStorage.setItem('favorite_id',JSON.stringify(this.favorite_id))
       localStorage.setItem('favorite_item',JSON.stringify(this.favorite_item))    
-  
     },
     
     async getProducts(id, category , subCategory){

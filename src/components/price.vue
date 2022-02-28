@@ -1,5 +1,5 @@
 <template>
-        {{formatMoney(item.price.amount) + ' ' + formatPrice(item.price.currency)}}
+        <span class="money">{{formatMoney(item.price.amount)}}</span>  {{ formatPrice(item.price.currency)}}
 </template>
 <script>
 export default {
@@ -36,9 +36,16 @@ export default {
         return val;
         },
         formatMoney(data){
-        const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
-        return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+            const numberValue = Number.prototype.toFixed.call(parseFloat(data) )           
+            return numberValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
         },
     }
 }
 </script>
+<style lang="scss" scoped>
+.money{
+    font-size: 20px;
+    font-weight: 900;
+    color: #333;
+}
+</style>

@@ -10,9 +10,10 @@
       </q-toolbar>
     <div class="flex justify-center">
       <q-tabs class="w920">
+        <q-route-tab to="/trello" label="Трелло" />
         <q-route-tab to="/" label="Магазин" />
-        <!-- <q-route-tab to="/contact" label="Элементы" />
-        <q-route-tab to="/posts" label="Для поставщиков" /> -->
+        
+        <!-- <q-route-tab to="/posts" label="Для поставщиков" /> -->
         <q-route-tab to="/mypay" label="Корзина" >
           <!-- <q-badge class="custom-badge" color="white" text-color="black">
             {{count.length}}

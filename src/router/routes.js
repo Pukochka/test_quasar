@@ -10,9 +10,11 @@ const routes = [
       
       { path: '/contact', component: () => import('src/pages/Contact.vue') },
       { path: '/', component: () => import('src/pages/Probl.vue') },
+      { path: '/all', component: () => import('src/pages/allCategory.vue') },
       
       
       { path: '/mypay', component: () => import('src/pages/Mypay.vue') },
+      { path: '/trello', component: () => import('src/pages/trello.vue') },
     ]
   },
 
